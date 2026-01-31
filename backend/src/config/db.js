@@ -1,16 +1,32 @@
 const mongoose = require('mongoose');
 
+let cachedConnection = null;
+
 const connectDB = async () => {
+  if (cachedConnection) {
+    return cachedConnection;
+  }
+
   const uri = (process.env.MONGO_URI || process.env.MONGODB_URI || '').trim();
   if (!uri) {
     console.error('MongoDB connection error: MONGO_URI is not set.');
     process.exit(1);
   }
+  
   try {
     const maskedUri = uri.replace(/\/\/([^:]+):([^@]+)@/, '// $1:****@');
     console.log('Attempting to connect to MongoDB with URI:', maskedUri);
-    const conn = await mongoose.connect(uri);
+    
+    const conn = await mongoose.connect(uri, {
+      bufferCommands: false,
+      bufferMaxEntries: 0,
+      useNewUrlParser: true,
+      useUnifiedTopology: true
+    });
+    
+    cachedConnection = conn;
     console.log(`MongoDB Connected: ${conn.connection.host}`);
+    return conn;
   } catch (error) {
     console.error('CRITICAL: MongoDB connection error!');
     console.error('Error Name:', error.name);
