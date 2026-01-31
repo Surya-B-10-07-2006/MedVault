@@ -1,7 +1,7 @@
 [build]
   base = "."
   publish = "frontend/dist"
-  command = "npm run build:all"
+  command = "npm install && cd backend && npm install --legacy-peer-deps && cd ../frontend && npm install && npx vite build && cd ../netlify/functions && npm install --legacy-peer-deps"
   functions = "netlify/functions"
 
 [build.environment]

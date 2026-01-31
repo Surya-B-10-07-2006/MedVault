@@ -13,7 +13,7 @@
     "client": "cd frontend && npm run dev",
     "install:all": "npm install && cd backend && npm install --legacy-peer-deps && cd ../frontend && npm install && cd ../netlify/functions && npm install --legacy-peer-deps",
     "build": "cd frontend && npm run build",
-    "build:all": "npm run install:all && cd frontend && npm run build",
+    "build:all": "npm run install:all && cd frontend && npx vite build",
     "start": "cd backend && npm start",
     "start:prod": "cd backend && NODE_ENV=production npm start",
     "test:system": "cd backend && node test-system.js",
