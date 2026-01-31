@@ -12,13 +12,18 @@ import {
   ArrowRight,
   TrendingUp,
   FileSearch,
-  ChevronRight
+  ChevronRight,
+  ShieldAlert,
+  Dna,
+  Zap,
+  Activity as ActivityIcon,
+  Plus
 } from 'lucide-react';
 import QuickAccessCard from '../components/QuickAccessCard';
 import Layout from '../components/Layout';
 import api from '../utils/api';
 import { useAuth } from '../context/AuthContext';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 
 export default function DoctorDashboard() {
@@ -26,6 +31,8 @@ export default function DoctorDashboard() {
   const [pendingRequests, setPendingRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchDashboardData();
@@ -53,115 +60,127 @@ export default function DoctorDashboard() {
     }
   };
 
-  const handleAction = async (requestId, status) => {
-    try {
-      // In a real app, doctor might cancel or finalize a request
-      toast.success(`Request ${status} successfully`);
-      fetchDashboardData();
-    } catch (err) {
-      toast.error('Action failed');
-    }
-  };
+  const statCards = [
+    { label: 'Total Patients', value: stats.patients, icon: <Users className="w-7 h-7" />, color: 'blue' },
+    { label: 'Vaults Accessed', value: stats.shared, icon: <Stethoscope className="w-7 h-7" />, color: 'teal' },
+    { label: 'Pending Keys', value: stats.requested, icon: <ShieldAlert className="w-7 h-7" />, color: 'purple' },
+  ];
 
   return (
-    <Layout title="Doctor's Command Center">
-      <div className="space-y-10 pb-20">
+    <Layout title="Command Core">
+      <div className="space-y-12 pb-20">
         {/* Professional Header */}
-        <section className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="flex items-center gap-6">
-            <div className="w-20 h-20 bg-white rounded-3xl shadow-xl flex items-center justify-center p-2 border border-gray-100 overflow-hidden ring-4 ring-medBlue/5">
-              <img src={user?.avatar || 'https://api.dicebear.com/7.x/avataaars/svg?seed=doctor'} className="w-full h-full object-cover" />
+        <section className="flex flex-col md:flex-row md:items-center justify-between gap-6 md:gap-12 bg-slate-900 p-6 md:p-10 rounded-[2.5rem] md:rounded-[3.5rem] text-white relative overflow-hidden shadow-2xl">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/10 rounded-full blur-[100px] -z-0"></div>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 md:gap-8 relative z-10 w-full md:w-auto">
+            <div className="w-20 h-20 md:w-24 md:h-24 bg-white rounded-[1.5rem] md:rounded-[2rem] shadow-2xl flex items-center justify-center p-1.5 border-4 border-white/20 overflow-hidden ring-4 ring-blue-500/20 active:scale-95 transition-transform shrink-0">
+              <img src={user?.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.name}`} className="w-full h-full object-cover rounded-[1rem] md:rounded-[1.5rem]" />
             </div>
-            <div>
-              <h1 className="text-4xl font-black text-medDark tracking-tight italic">
-                Greetings, Dr. {user?.name.split(' ').pop()}
+            <div className="min-w-0">
+              <div className="flex flex-wrap items-center gap-2 md:gap-3 mb-2">
+                <span className="px-2 md:px-3 py-1 bg-teal-500/20 text-teal-400 text-[8px] md:text-[10px] font-black uppercase tracking-[0.2em] rounded-full border border-teal-500/30">Verified MD</span>
+                <p className="text-slate-400 font-bold uppercase text-[8px] md:text-[10px] tracking-[0.2em] flex items-center gap-1.5 leading-none">
+                  <div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(59,130,246,0.8)]"></div>
+                  System Encrypted
+                </p>
+              </div>
+              <h1 className="text-2xl md:text-4xl font-black tracking-tight italic uppercase leading-tight truncate">
+                Dr. <span className="grad-text brightness-125">{user?.name.split(' ').pop()}</span>
               </h1>
-              <p className="text-gray-400 font-bold mt-1 uppercase text-[10px] tracking-[0.2em] flex items-center gap-2">
-                <span className="w-2 h-2 bg-medBlue rounded-full shadow-[0_0_8px_rgba(45,156,219,0.5)]"></span>
-                License Active • Medical Infrastructure Encrypted
-              </p>
             </div>
           </div>
-          <div>
-            <button className="flex items-center gap-3 px-8 py-4 bg-medTeal text-white font-extrabold rounded-[2rem] shadow-xl hover:bg-medTeal/90 hover:-translate-y-1 transition-all">
-              Quick Access Portal
+          <div className="relative z-10 w-full md:w-auto mt-4 md:mt-0">
+            <button
+              onClick={() => navigate('/doctor/quick-access')}
+              className="group flex items-center justify-center gap-3 w-full md:w-auto px-8 py-4 bg-white text-slate-900 font-extrabold rounded-2xl shadow-xl hover:bg-slate-50 transition-all active:scale-95"
+            >
+              <Dna className="w-5 h-5 text-blue-600 group-hover:rotate-180 transition-transform duration-700" />
+              <span className="uppercase tracking-widest text-[12px]">Scan New Vault</span>
             </button>
           </div>
         </section>
 
-        {/* Doctor Stats (Professional Navy/Blue/Grey Palette) */}
+        {/* Doctor Stats Grid */}
         <section className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {[
-            { label: 'Total Patients', value: stats.patients, icon: <Users className="w-6 h-6" />, color: 'bg-medBlue' },
-            { label: 'Records Accessed', value: stats.shared, icon: <Stethoscope className="w-6 h-6" />, color: 'bg-medDark' },
-            { label: 'Access Requests', value: stats.requested, icon: <Clock className="w-6 h-6" />, color: 'bg-slate-400' },
-          ].map((stat, idx) => (
+          {statCards.map((stat, idx) => (
             <motion.div
               key={idx}
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
               transition={{ delay: idx * 0.1 }}
-              className="bg-white p-8 rounded-[3rem] border border-gray-100 shadow-2xl shadow-slate-200/50 hover:shadow-medBlue/10 transition-all group overflow-hidden relative"
+              className="glass-md p-10 rounded-[3rem] hover-lift group relative overflow-hidden"
             >
-              <div className={`absolute top-0 right-0 w-32 h-32 ${stat.color} opacity-[0.03] rounded-bl-full`}></div>
-              <div className="flex items-start justify-between mb-8">
-                <div className={`w-14 h-14 ${stat.color} text-white rounded-2xl flex items-center justify-center shadow-lg group-hover:rotate-6 transition-transform`}>
+              <div className="absolute top-0 right-0 w-32 h-32 bg-slate-500/5 rounded-bl-[100px] -z-0"></div>
+              <div className="flex items-start justify-between mb-8 relative z-10">
+                <div className={`w-16 h-16 grad-primary rounded-2xl flex items-center justify-center text-white shadow-xl group-hover:scale-110 group-hover:rotate-6 transition-transform`}>
                   {stat.icon}
                 </div>
-                <div className="text-[10px] font-black text-gray-300 uppercase italic tracking-widest">Medical Analytics</div>
+                <div className="text-[10px] font-black text-slate-400 uppercase italic tracking-[0.3em]">Sector Analysis</div>
               </div>
-              <h3 className="text-gray-400 font-bold text-xs uppercase tracking-widest mb-1">{stat.label}</h3>
-              <div className="text-4xl font-black text-medDark leading-none">{stat.value}</div>
+              <h3 className="text-slate-400 font-black text-[10px] uppercase tracking-[0.4em] mb-2 relative z-10">{stat.label}</h3>
+              <div className="text-5xl font-black text-slate-900 leading-none tracking-tighter relative z-10">{stat.value}</div>
             </motion.div>
           ))}
         </section>
 
         {/* Main Workspace */}
-        <div className="grid lg:grid-cols-3 gap-10">
+        <div className="grid lg:grid-cols-3 gap-12">
           {/* Quick Access Card */}
           <section className="lg:col-span-1">
-            <QuickAccessCard />
+            <div className="hover-lift">
+              <QuickAccessCard />
+            </div>
           </section>
 
           {/* Access Requests Table */}
-          <section className="lg:col-span-2 space-y-6">
-            <div className="flex items-center justify-between px-6">
-              <h2 className="text-2xl font-black text-medDark tracking-tight flex items-center gap-3 italic">
-                <Activity className="w-7 h-7 text-medTeal" /> Pending Access
+          <section className="lg:col-span-2 space-y-8">
+            <div className="flex items-center justify-between px-2">
+              <h2 className="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-4">
+                <div className="w-12 h-12 rounded-2xl bg-white flex items-center justify-center shadow-lg border border-slate-100">
+                  <ActivityIcon className="w-6 h-6 text-teal-500" />
+                </div>
+                Pending Authorization
               </h2>
+              <Link to="/doctor/requests" className="text-teal-600 font-black text-[10px] uppercase tracking-widest hover:translate-x-1 transition-transform flex items-center gap-2">
+                All Requests <ChevronRight className="w-4 h-4" />
+              </Link>
             </div>
 
-            <div className="bg-white rounded-[3rem] border border-gray-100 shadow-2xl shadow-slate-200/50 overflow-hidden">
+            <div className="glass-md rounded-[3.5rem] overflow-hidden border-white/60">
               {loading ? (
-                <div className="p-20 text-center"><Loader2 className="w-10 h-10 animate-spin text-medBlue mx-auto" /></div>
+                <div className="p-32 text-center animate-pulse flex flex-col items-center">
+                  <div className="w-12 h-12 border-4 border-teal-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+                  <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Syncing Node...</span>
+                </div>
               ) : pendingRequests.length === 0 ? (
-                <div className="py-24 text-center">
-                  <FileSearch className="w-16 h-16 text-gray-200 mx-auto mb-4" />
-                  <p className="text-gray-400 font-bold italic uppercase text-xs tracking-widest">No pending patient requests</p>
+                <div className="py-32 text-center flex flex-col items-center">
+                  <FileSearch className="w-20 h-20 text-slate-200 mb-6" />
+                  <p className="text-slate-400 font-black uppercase text-xs tracking-[0.3em] italic">No active authorization requests</p>
                 </div>
               ) : (
-                <div className="divide-y divide-gray-50">
+                <div className="divide-y divide-slate-100">
                   {pendingRequests.map((req, idx) => (
                     <motion.div
                       key={req._id}
                       initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      className="p-8 hover:bg-medGrey/30 transition-all flex items-center justify-between group"
+                      whileInView={{ opacity: 1 }}
+                      className="p-8 hover:bg-slate-50/50 transition-all flex items-center justify-between group"
                     >
-                      <div className="flex items-center gap-5">
-                        <div className="w-14 h-14 bg-medGrey rounded-2xl flex items-center justify-center font-black text-medDark text-lg shadow-inner ring-4 ring-transparent group-hover:ring-medBlue/10 transition-all">
+                      <div className="flex items-center gap-6">
+                        <div className="w-16 h-16 grad-primary text-white rounded-[1.5rem] flex items-center justify-center font-black text-xl shadow-lg ring-4 ring-transparent group-hover:ring-blue-100 transition-all">
                           {req.patientId?.name?.[0]?.toUpperCase() || 'P'}
                         </div>
                         <div>
-                          <h4 className="text-lg font-black text-medDark leading-tight group-hover:text-medBlue transition-colors">{req.patientId?.name || 'Unknown Patient'}</h4>
-                          <p className="text-xs font-bold text-gray-400 mt-1 uppercase italic tracking-tighter">
-                            Requested on {new Date(req.createdAt).toLocaleDateString()}
+                          <h4 className="text-xl font-black text-slate-800 tracking-tight group-hover:text-blue-600 transition-colors uppercase italic">{req.patientId?.name || 'Unknown Subject'}</h4>
+                          <p className="text-[10px] font-bold text-slate-400 mt-1.5 uppercase tracking-widest flex items-center gap-2">
+                            <Clock className="w-3.5 h-3.5" /> Filed: {new Date(req.createdAt).toLocaleDateString()}
                           </p>
                         </div>
                       </div>
-                      <div className="flex items-center gap-3">
-                        <span className="px-4 py-2 bg-amber-50 text-amber-600 rounded-full text-[10px] font-black uppercase tracking-widest border border-amber-100">Pending</span>
-                        <Link to="/doctor/requests" className="p-3 bg-medDark text-white rounded-xl hover:bg-medBlue transition-all shadow-lg group-hover:translate-x-1">
+                      <div className="flex items-center gap-4">
+                        <span className="px-5 py-2 bg-amber-500/10 text-amber-600 rounded-full text-[10px] font-black uppercase tracking-widest border border-amber-500/20">Awaiting Key</span>
+                        <Link to="/doctor/requests" className="w-12 h-12 bg-slate-900 text-white rounded-xl flex items-center justify-center hover:bg-blue-600 transition-all shadow-xl group-hover:translate-x-1">
                           <ArrowRight className="w-5 h-5" />
                         </Link>
                       </div>
@@ -172,33 +191,36 @@ export default function DoctorDashboard() {
             </div>
           </section>
 
-          {/* Quick Stats / Timeline */}
-          <section className="lg:col-span-3 grid md:grid-cols-2 gap-8">
-            <div className="bg-medDark p-10 rounded-[3rem] text-white shadow-2xl relative overflow-hidden group">
-              <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-medBlue/20 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700"></div>
-              <TrendingUp className="w-10 h-10 mb-8 text-medTeal" />
-              <h3 className="text-2xl font-black mb-4 italic leading-tight">Practice <br /> Insights</h3>
-              <p className="text-white/50 text-sm font-medium leading-relaxed italic mb-8">
-                Your response rate to patient requests is <span className="text-medTeal font-black">94%</span>. Maintaining this ensures higher patient trust.
+          {/* Performance / Status Panel */}
+          <section className="lg:col-span-3 grid md:grid-cols-2 gap-10">
+            <div className="mesh-gradient-dark p-12 rounded-[4rem] text-white shadow-2xl relative overflow-hidden group border border-white/5">
+              <div className="absolute -bottom-10 -right-10 w-48 h-48 bg-teal-500/10 rounded-full blur-[100px] group-hover:scale-150 transition-transform duration-1000"></div>
+              <TrendingUp className="w-12 h-12 mb-8 text-teal-400 opacity-50" />
+              <h3 className="text-3xl font-black mb-4 italic leading-tight uppercase tracking-tight">Practice <br /> Throughput</h3>
+              <p className="text-slate-400 text-sm font-bold leading-relaxed italic mb-10">
+                Performance Score: <span className="text-teal-400 font-black tracking-widest text-lg">94.2%</span>. <br /> Optimal response time detected across all patient sectors.
               </p>
-              <button className="text-xs font-black uppercase tracking-[0.2em] border-b-4 border-medBlue pb-1 hover:text-medBlue transition-colors">
-                View Performance
+              <button className="text-[10px] font-black uppercase tracking-[0.4em] border-b-2 border-teal-500 pb-2 hover:text-teal-400 transition-colors">
+                View Detailed Metrics
               </button>
             </div>
 
-            <div className="glass p-10 rounded-[3rem] border-white/50 border shadow-inner">
-              <h3 className="text-lg font-black text-medDark mb-8 uppercase tracking-tighter flex items-center gap-3">
-                <Clock className="w-6 h-6 text-medDark" /> System Status
+            <div className="glass-md p-12 rounded-[4rem] border-white/60 shadow-inner flex flex-col justify-between">
+              <h3 className="text-[10px] font-black text-slate-400 mb-10 uppercase tracking-[0.4em] flex items-center gap-4">
+                <Zap className="w-5 h-5 text-blue-500" /> System Health Status
               </h3>
-              <div className="space-y-6">
+              <div className="space-y-8">
                 {[
-                  { label: 'Encrypted DB', status: 'Online', color: 'text-medTeal' },
-                  { label: 'Audit Logs', status: 'Syncing', color: 'text-medBlue' },
-                  { label: 'Blockchain ID', status: 'Verified', color: 'text-medTeal' },
+                  { label: 'Blockchain ID Node', status: 'Online', color: 'bg-teal-500' },
+                  { label: 'Cloud Vault Sync', status: 'High Speed', color: 'bg-blue-500' },
+                  { label: 'Encryption Engine', status: 'Verified', color: 'bg-teal-500' },
                 ].map((item, i) => (
                   <div key={i} className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-gray-500 uppercase tracking-widest">{item.label}</span>
-                    <span className={`text-[10px] font-black uppercase italic ${item.color}`}>{item.status}</span>
+                    <span className="text-xs font-black text-slate-500 uppercase tracking-widest">{item.label}</span>
+                    <div className="flex items-center gap-3">
+                      <span className="text-[10px] font-black uppercase italic text-slate-800 tracking-widest">{item.status}</span>
+                      <div className={`w-2.5 h-2.5 rounded-full ${item.color} animate-pulse shadow-sm`}></div>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -207,24 +229,5 @@ export default function DoctorDashboard() {
         </div>
       </div>
     </Layout>
-  );
-}
-
-function Loader2(props) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M21 12a9 9 0 1 1-6.219-8.56" />
-    </svg>
   );
 }

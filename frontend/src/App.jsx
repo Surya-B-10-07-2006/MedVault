@@ -1,5 +1,6 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
+import { motion, useScroll, useSpring } from 'framer-motion';
 import { useAuth } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import Loader from './components/Loader';
@@ -51,29 +52,43 @@ function AppRoutes() {
   }
 
   return (
-    <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/login" element={user ? <Navigate to={user.role === 'doctor' ? '/doctor/dashboard' : '/dashboard'} replace /> : <Login />} />
-      <Route path="/register" element={user ? <Navigate to={user.role === 'doctor' ? '/doctor/dashboard' : '/dashboard'} replace /> : <Register />} />
-      <Route path="/forgot-password" element={<ForgotPassword />} />
-      <Route path="/reset-password" element={<ResetPassword />} />
+    <div className="min-h-screen mesh-gradient relative">
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={user ? <Navigate to={user.role === 'doctor' ? '/doctor/dashboard' : '/dashboard'} replace /> : <Login />} />
+        <Route path="/register" element={user ? <Navigate to={user.role === 'doctor' ? '/doctor/dashboard' : '/dashboard'} replace /> : <Register />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
 
-      <Route path="/dashboard" element={<ProtectedRoute allowedRoles={['patient', 'admin']}><PatientDashboard /></ProtectedRoute>} />
-      <Route path="/records" element={<ProtectedRoute allowedRoles={['patient', 'admin']}><ViewRecords /></ProtectedRoute>} />
-      <Route path="/upload" element={<ProtectedRoute allowedRoles={['patient', 'admin']}><UploadRecord /></ProtectedRoute>} />
-      <Route path="/help" element={<ProtectedRoute><HelpCenter /></ProtectedRoute>} />
-      <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-      <Route path="/activity" element={<ProtectedRoute><ActivityLogs /></ProtectedRoute>} />
+        <Route path="/dashboard" element={<ProtectedRoute allowedRoles={['patient', 'admin']}><PatientDashboard /></ProtectedRoute>} />
+        <Route path="/records" element={<ProtectedRoute allowedRoles={['patient', 'admin']}><ViewRecords /></ProtectedRoute>} />
+        <Route path="/upload" element={<ProtectedRoute allowedRoles={['patient', 'admin']}><UploadRecord /></ProtectedRoute>} />
+        <Route path="/help" element={<ProtectedRoute><HelpCenter /></ProtectedRoute>} />
+        <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+        <Route path="/activity" element={<ProtectedRoute><ActivityLogs /></ProtectedRoute>} />
 
-      <Route path="/doctor/dashboard" element={<ProtectedRoute allowedRoles={['doctor', 'admin']}><DoctorDashboard /></ProtectedRoute>} />
-      <Route path="/doctor/quick-access" element={<ProtectedRoute allowedRoles={['doctor', 'admin']}><QuickAccess /></ProtectedRoute>} />
+        <Route path="/doctor/dashboard" element={<ProtectedRoute allowedRoles={['doctor', 'admin']}><DoctorDashboard /></ProtectedRoute>} />
+        <Route path="/doctor/quick-access" element={<ProtectedRoute allowedRoles={['doctor', 'admin']}><QuickAccess /></ProtectedRoute>} />
 
-      <Route path="*" element={<NotFound />} />
-    </Routes>
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </div>
   );
 }
 
 function App() {
-  return <AppRoutes />;
+  const { scrollYProgress } = useScroll();
+  const scaleX = useSpring(scrollYProgress, {
+    stiffness: 100,
+    damping: 30,
+    restDelta: 0.001
+  });
+
+  return (
+    <>
+      <motion.div className="scroll-progress" style={{ scaleX }} />
+      <AppRoutes />
+    </>
+  );
 }
 export default App;

@@ -45,152 +45,184 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen grad-medical flex flex-col items-center justify-center p-6 font-sans">
-      {/* Head */}
-      <div className="mb-12 flex items-center gap-3">
-        <div className="w-12 h-12 grad-primary rounded-2xl flex items-center justify-center shadow-lg">
-          <ShieldCheck className="text-white w-7 h-7" />
-        </div>
-        <span className="text-3xl font-black text-medDark tracking-tight">MedVault</span>
-      </div>
-
-      <div className="w-full max-w-xl">
-        {/* Progress Tracker */}
-        <div className="flex items-center justify-between mb-10 px-4">
-          {[1, 2].map((i) => (
-            <div key={i} className="flex items-center">
-              <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold transition-all ${step >= i ? 'bg-medBlue text-white shadow-lg shadow-medBlue/30 scale-110' : 'bg-white text-gray-400 border border-gray-200'}`}>
-                {step > i ? <CheckCircle2 className="w-6 h-6" /> : i}
-              </div>
-              {i === 1 && (
-                <div className={`h-1 w-24 mx-4 rounded-full transition-all ${step > 1 ? 'bg-medBlue' : 'bg-gray-200'}`}></div>
-              )}
-            </div>
-          ))}
+    <div className="min-h-screen flex bg-white font-sans overflow-hidden">
+      {/* Left Decoration Section */}
+      <motion.div
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
+        className="hidden lg:flex lg:w-1/2 mesh-gradient-dark p-12 flex-col justify-between relative overflow-hidden"
+      >
+        <div className="absolute inset-0 opacity-40 pointer-events-none">
+          <img src="/login-bg.png" alt="Decoration" className="w-full h-full object-cover" />
+          <div className="absolute inset-0 bg-slate-900/40"></div>
         </div>
 
-        <AnimatePresence mode="wait">
-          {step === 1 ? (
-            <motion.div
-              key="step1"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              className="glass p-10 rounded-[2.5rem] shadow-2xl border-white/50 text-center"
-            >
-              <h1 className="text-3xl font-extrabold text-medDark mb-3">Join MedVault</h1>
-              <p className="text-gray-500 font-medium mb-10">Select your account type to begin your journey.</p>
+        <div className="relative z-10 flex items-center gap-3">
+          <div className="w-12 h-12 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center border border-white/30 shadow-lg overflow-hidden p-2">
+            <img
+              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSd_mP4WmzlK0cbChhAP2zR5vVjlGo0xjfQzQ&s"
+              alt="MedVault Logo"
+              className="w-full h-full object-contain"
+            />
+          </div>
+          <span className="text-3xl font-black text-white tracking-tight uppercase italic">Med<span className="text-green-400">Vault</span></span>
+        </div>
 
-              <div className="grid grid-cols-2 gap-6">
-                <button
-                  onClick={() => handleRoleSelect('patient')}
-                  className="group flex flex-col items-center p-8 rounded-3xl bg-white border-2 border-transparent hover:border-medBlue hover:shadow-xl transition-all"
-                >
-                  <div className="w-20 h-20 bg-medBlue/10 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                    <User className="w-10 h-10 text-medBlue" />
-                  </div>
-                  <h3 className="text-xl font-bold text-medDark mb-1">Patient</h3>
-                  <p className="text-sm text-gray-500 font-medium">I want to manage my medical records.</p>
+        <div className="relative z-10 max-w-lg mb-12">
+          <motion.h2
+            initial={{ y: 20 }}
+            animate={{ y: 0 }}
+            className="text-5xl font-black text-white leading-tight mb-6 italic tracking-tighter uppercase"
+          >
+            Universal <br />
+            Health ID.
+          </motion.h2>
+          <p className="text-xl text-slate-300 leading-relaxed font-bold italic">
+            Join the global network of secured medical nodes. Claim your digital health sovereignty today.
+          </p>
+        </div>
+
+        <div className="relative z-10 flex gap-4 text-white/40 font-black text-[10px] uppercase tracking-widest">
+          <span>GDPR Compliant</span>
+          <span className="text-blue-500">Node v2.4</span>
+          <span>AES-256</span>
+        </div>
+      </motion.div>
+
+      {/* Right Form Section */}
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 lg:p-16 grad-surface overflow-y-auto">
+        <div className="w-full max-w-md">
+          <div className="mb-12 text-center lg:text-left">
+            <h1 className="text-4xl font-black text-slate-900 mb-3 tracking-tighter italic uppercase">Create Account</h1>
+            <p className="text-slate-500 font-bold uppercase text-[10px] tracking-widest italic">Initialize your secure medical vault</p>
+          </div>
+
+          {/* Progress Tracker */}
+          <div className="flex items-center gap-4 mb-10">
+            {[1, 2].map((i) => (
+              <div key={i} className="flex items-center gap-2">
+                <div className={`w-8 h-8 rounded-xl flex items-center justify-center font-black transition-all ${step >= i ? 'bg-slate-900 text-teal-400 shadow-xl' : 'bg-slate-100 text-slate-400'}`}>
+                  {step > i ? <CheckCircle2 className="w-5 h-5" /> : i}
+                </div>
+                {i === 1 && <div className={`h-1 w-12 rounded-full transition-all ${step > 1 ? 'bg-slate-900' : 'bg-slate-100'}`}></div>}
+              </div>
+            ))}
+          </div>
+
+          <AnimatePresence mode="wait">
+            {step === 1 ? (
+              <motion.div
+                key="step1"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                className="space-y-6"
+              >
+                <h3 className="text-lg font-black text-slate-900 uppercase tracking-tight italic mb-6">Select Identity Protocol</h3>
+                <div className="grid grid-cols-1 gap-4">
+                  <button
+                    onClick={() => handleRoleSelect('patient')}
+                    className="group flex flex-col items-start p-6 rounded-[2rem] bg-white border border-slate-100 hover:border-blue-500 hover:shadow-2xl transition-all text-left"
+                  >
+                    <div className="w-12 h-12 bg-slate-50 rounded-xl flex items-center justify-center mb-4 group-hover:bg-blue-600 transition-colors">
+                      <User className="w-6 h-6 text-slate-600 group-hover:text-white" />
+                    </div>
+                    <h3 className="text-lg font-black text-slate-900 italic uppercase leading-none">Patient Node</h3>
+                    <p className="text-[10px] text-slate-400 font-bold mt-2 uppercase tracking-widest">Personal Healthcare Management</p>
+                  </button>
+
+                  <button
+                    onClick={() => handleRoleSelect('doctor')}
+                    className="group flex flex-col items-start p-6 rounded-[2rem] bg-white border border-slate-100 hover:border-green-500 hover:shadow-2xl transition-all text-left"
+                  >
+                    <div className="w-12 h-12 bg-slate-50 rounded-xl flex items-center justify-center mb-4 group-hover:bg-green-500 transition-colors">
+                      <UserRoundCog className="w-6 h-6 text-slate-600 group-hover:text-white" />
+                    </div>
+                    <h3 className="text-lg font-black text-slate-900 italic uppercase leading-none">Doctor Node</h3>
+                    <p className="text-[10px] text-slate-400 font-bold mt-2 uppercase tracking-widest">Clinical Practice & Authorization</p>
+                  </button>
+                </div>
+
+                <div className="mt-10 pt-8 border-t border-slate-100 text-center lg:text-left">
+                  <p className="text-slate-500 font-bold uppercase text-[10px] tracking-widest">
+                    Authorized Node Access? <Link to="/login" className="text-blue-600 font-black hover:underline italic ml-2">Sign In</Link>
+                  </p>
+                </div>
+              </motion.div>
+            ) : (
+              <motion.div
+                key="step2"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                className="space-y-8"
+              >
+                <button onClick={() => setStep(1)} className="flex items-center gap-2 text-slate-400 hover:text-slate-900 font-black text-[10px] uppercase tracking-widest mb-6 transition-colors">
+                  <ArrowLeft className="w-4 h-4" /> Initialize Again
                 </button>
 
-                <button
-                  onClick={() => handleRoleSelect('doctor')}
-                  className="group flex flex-col items-center p-8 rounded-3xl bg-white border-2 border-transparent hover:border-medBlue hover:shadow-xl transition-all"
-                >
-                  <div className="w-20 h-20 bg-medTeal/10 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                    <UserRoundCog className="w-10 h-10 text-medTeal" />
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  <div className="space-y-2">
+                    <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 leading-none">Identity Name</label>
+                    <div className="relative group/field">
+                      <UserCircle className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-300 group-focus-within/field:text-blue-500 transition-all" />
+                      <input
+                        name="name"
+                        type="text"
+                        value={formData.name}
+                        onChange={handleInputChange}
+                        required
+                        className="w-full pl-14 pr-6 py-4 rounded-2xl bg-slate-50/50 border border-slate-100 focus:bg-white focus:ring-8 focus:ring-blue-500/5 focus:border-blue-500 font-bold text-slate-900 outline-none transition-all uppercase tracking-tight"
+                        placeholder="Dr. John Doe / Patient Jane"
+                      />
+                    </div>
                   </div>
-                  <h3 className="text-xl font-bold text-medDark mb-1">Doctor</h3>
-                  <p className="text-sm text-gray-500 font-medium">I want to treat my patients securely.</p>
-                </button>
-              </div>
 
-              <div className="mt-10 border-t border-gray-100 pt-8">
-                <p className="text-gray-500 font-medium">
-                  Already have an account? <Link to="/login" className="text-medBlue font-extrabold hover:underline">Sign In</Link>
-                </p>
-              </div>
-            </motion.div>
-          ) : (
-            <motion.div
-              key="step2"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              className="glass p-10 rounded-[2.5rem] shadow-2xl border-white/50"
-            >
-              <button onClick={() => setStep(1)} className="flex items-center gap-2 text-gray-500 hover:text-medDark font-bold mb-6 transition-colors">
-                <ArrowLeft className="w-5 h-5" /> Back
-              </button>
-
-              <div className="mb-8">
-                <h1 className="text-3xl font-extrabold text-medDark mb-2">Account Details</h1>
-                <p className="text-gray-500 font-medium">
-                  Registering as a <span className="text-medBlue font-bold capitalize">{role}</span>
-                </p>
-              </div>
-
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="space-y-2">
-                  <label className="block text-sm font-bold text-medDark ml-1">Full Name</label>
-                  <div className="relative">
-                    <UserCircle className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                    <input
-                      name="name"
-                      type="text"
-                      value={formData.name}
-                      onChange={handleInputChange}
-                      required
-                      className="w-full rounded-2xl border border-gray-200 bg-white px-12 py-4 focus:ring-4 focus:ring-medBlue/10 focus:border-medBlue outline-none transition-all font-medium text-medDark"
-                      placeholder="Dr. John Doe / Patient Jane"
-                    />
+                  <div className="space-y-2">
+                    <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 leading-none">Node Email Registry</label>
+                    <div className="relative group/field">
+                      <Mail className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-300 group-focus-within/field:text-blue-500 transition-all" />
+                      <input
+                        name="email"
+                        type="email"
+                        value={formData.email}
+                        onChange={handleInputChange}
+                        required
+                        className="w-full pl-14 pr-6 py-4 rounded-2xl bg-slate-50/50 border border-slate-100 focus:bg-white focus:ring-8 focus:ring-blue-500/5 focus:border-blue-500 font-bold text-slate-900 outline-none transition-all"
+                        placeholder="name@example.com"
+                      />
+                    </div>
                   </div>
-                </div>
 
-                <div className="space-y-2">
-                  <label className="block text-sm font-bold text-medDark ml-1">Email Address</label>
-                  <div className="relative">
-                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                    <input
-                      name="email"
-                      type="email"
-                      value={formData.email}
-                      onChange={handleInputChange}
-                      required
-                      className="w-full rounded-2xl border border-gray-200 bg-white px-12 py-4 focus:ring-4 focus:ring-medBlue/10 focus:border-medBlue outline-none transition-all font-medium text-medDark"
-                      placeholder="name@example.com"
-                    />
+                  <div className="space-y-2">
+                    <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 leading-none">Access Firewall Key</label>
+                    <div className="relative group/field">
+                      <Lock className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-300 group-focus-within/field:text-blue-500 transition-all" />
+                      <input
+                        name="password"
+                        type="password"
+                        value={formData.password}
+                        onChange={handleInputChange}
+                        required
+                        minLength={8}
+                        className="w-full pl-14 pr-6 py-4 rounded-2xl bg-slate-50/50 border border-slate-100 focus:bg-white focus:ring-8 focus:ring-blue-500/5 focus:border-blue-500 font-bold text-slate-900 outline-none transition-all"
+                        placeholder="••••••••"
+                      />
+                    </div>
                   </div>
-                </div>
 
-                <div className="space-y-2">
-                  <label className="block text-sm font-bold text-medDark ml-1">Password</label>
-                  <div className="relative">
-                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                    <input
-                      name="password"
-                      type="password"
-                      value={formData.password}
-                      onChange={handleInputChange}
-                      required
-                      minLength={8}
-                      className="w-full rounded-2xl border border-gray-200 bg-white px-12 py-4 focus:ring-4 focus:ring-medBlue/10 focus:border-medBlue outline-none transition-all font-medium text-medDark"
-                      placeholder="••••••••"
-                    />
-                  </div>
-                </div>
-
-                <Button
-                  type="submit"
-                  loading={loading}
-                  className="w-full py-5 text-lg font-extrabold rounded-2xl shadow-xl shadow-medBlue/30 mt-6 flex items-center justify-center gap-2"
-                >
-                  Create Account <ArrowRight className="w-5 h-5" />
-                </Button>
-              </form>
-            </motion.div>
-          )}
-        </AnimatePresence>
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="w-full py-5 bg-slate-900 text-white text-lg font-black rounded-2xl shadow-2xl shadow-slate-900/20 mt-6 flex items-center justify-center gap-3 active:scale-95 transition-all italic uppercase tracking-widest disabled:opacity-50"
+                  >
+                    {loading ? 'Decrypting...' : 'Claim Node Account'} <ArrowRight className="w-5 h-5 text-green-400" />
+                  </button>
+                </form>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </div>
     </div>
   );
