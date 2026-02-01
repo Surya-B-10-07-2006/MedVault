@@ -11,16 +11,25 @@
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "server": "cd backend && npm run dev",
     "client": "cd frontend && npm run dev",
-    "install:all": "npm install && cd backend && npm install --legacy-peer-deps && cd ../frontend && npm install && cd ../netlify/functions && npm install --legacy-peer-deps",
+    "install:all": "npm install && cd backend && npm install --legacy-peer-deps && cd ../frontend && npm install && cd ../netlify/functions && npm install --legacy-peer-deps && cd ../..",
     "build": "cd frontend && npm run build",
-    "build:all": "npm run install:all && cd frontend && npx vite build",
+    "build:all": "npm run install:all && cd frontend && npm run build",
     "start": "cd backend && npm start",
     "start:prod": "cd backend && NODE_ENV=production npm start",
     "test:system": "cd backend && node test-system.js",
-    "deploy:netlify": "netlify deploy --prod",
-    "netlify-postbuild": "npm run build:all"
+    "validate": "node validate-deployment.js",
+    "deploy:render": "git push render main",
+    "deploy:vercel": "vercel --prod",
+    "deploy:netlify": "npm run build:all && netlify deploy --prod",
+    "deploy:heroku": "git push heroku main",
+    "docker:build": "docker build -t medvault .",
+    "docker:run": "docker-compose up -d",
+    "docker:stop": "docker-compose down",
+    "docker:logs": "docker-compose logs -f"
   },
   "devDependencies": {
-    "concurrently": "^8.2.2"
+    "concurrently": "^8.2.2",
+    "@vercel/node": "^3.0.0",
+    "netlify-cli": "^17.0.0"
   }
 }

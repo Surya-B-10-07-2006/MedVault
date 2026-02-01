@@ -1,15 +1,16 @@
 [build]
   base = "."
+  command = "npm run build:all"
   publish = "frontend/dist"
-  command = "npm install && cd backend && npm install --legacy-peer-deps && cd ../frontend && npm install && npm run build && cd ../netlify/functions && npm install --legacy-peer-deps"
   functions = "netlify/functions"
 
 [build.environment]
   NODE_VERSION = "18"
+  NPM_FLAGS = "--legacy-peer-deps"
 
 [[redirects]]
   from = "/api/*"
-  to = "/.netlify/functions/:splat"
+  to = "/.netlify/functions/api/:splat"
   status = 200
 
 [[redirects]]
@@ -17,10 +18,12 @@
   to = "/index.html"
   status = 200
 
+[functions]
+  node_bundler = "esbuild"
+
 [[headers]]
-  for = "/*"
+  for = "/api/*"
   [headers.values]
-    X-Frame-Options = "DENY"
-    X-XSS-Protection = "1; mode=block"
-    X-Content-Type-Options = "nosniff"
-    Referrer-Policy = "strict-origin-when-cross-origin"
+    Access-Control-Allow-Origin = "*"
+    Access-Control-Allow-Methods = "GET, POST, PUT, DELETE, PATCH, OPTIONS"
+    Access-Control-Allow-Headers = "Content-Type, Authorization"

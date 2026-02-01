@@ -1,0 +1,48 @@
+name: medvault
+services:
+- name: backend
+  source_dir: /backend
+  github:
+    repo: your-username/medvault
+    branch: main
+  run_command: npm start
+  environment_slug: node-js
+  instance_count: 1
+  instance_size_slug: basic-xxs
+  env:
+  - key: NODE_ENV
+    value: production
+  - key: PORT
+    value: "8080"
+  - key: MONGO_URI
+    value: ${medvault-db.DATABASE_URL}
+  - key: JWT_SECRET
+    type: SECRET
+  - key: REFRESH_SECRET
+    type: SECRET
+  - key: JWT_EXPIRE
+    value: 15m
+  - key: REFRESH_EXPIRE
+    value: 7d
+  - key: FRONTEND_URL
+    value: ${APP_URL}
+
+- name: frontend
+  source_dir: /frontend
+  github:
+    repo: your-username/medvault
+    branch: main
+  build_command: npm run build
+  environment_slug: node-js
+  instance_count: 1
+  instance_size_slug: basic-xxs
+  routes:
+  - path: /
+  env:
+  - key: REACT_APP_API_URL
+    value: ${backend.PUBLIC_URL}/api
+
+databases:
+- name: medvault-db
+  engine: MONGODB
+  version: "6"

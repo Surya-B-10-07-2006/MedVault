@@ -1,0 +1,41 @@
+{
+  "version": 2,
+  "name": "medvault",
+  "builds": [
+    {
+      "src": "frontend/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist"
+      }
+    },
+    {
+      "src": "backend/server.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/backend/server.js"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/frontend/dist/$1"
+    }
+  ],
+  "env": {
+    "NODE_ENV": "production",
+    "MONGO_URI": "@mongo_uri",
+    "JWT_SECRET": "@jwt_secret",
+    "REFRESH_SECRET": "@refresh_secret",
+    "JWT_EXPIRE": "15m",
+    "REFRESH_EXPIRE": "7d",
+    "FRONTEND_URL": "https://medvault.vercel.app"
+  },
+  "build": {
+    "env": {
+      "REACT_APP_API_URL": "https://medvault.vercel.app/api"
+    }
+  }
+}

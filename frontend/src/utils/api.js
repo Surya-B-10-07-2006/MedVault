@@ -1,12 +1,28 @@
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || 
-  (import.meta.env.PROD ? '/.netlify/functions/api' : '/api');
+// API URL configuration for different environments
+const getApiUrl = () => {
+  // Check for environment variable first
+  if (import.meta.env.VITE_API_URL) {
+    return import.meta.env.VITE_API_URL;
+  }
+  
+  // Production: use relative path for same-origin requests
+  if (import.meta.env.PROD) {
+    return '/api';
+  }
+  
+  // Development: use localhost backend
+  return 'http://localhost:5000/api';
+};
+
+const API_URL = getApiUrl();
 
 const api = axios.create({
   baseURL: API_URL,
   headers: { 'Content-Type': 'application/json' },
   withCredentials: true,
+  timeout: 30000, // 30 second timeout
 });
 
 api.interceptors.request.use(

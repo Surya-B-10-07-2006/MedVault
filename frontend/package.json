@@ -24,7 +24,6 @@
     "start": "vite",
     "dev": "vite",
     "build": "vite build",
-    "build:all": "cd .. && npm run install:all && cd frontend && vite build",
     "preview": "vite preview"
   },
   "browserslist": {
